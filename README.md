@@ -1,14 +1,14 @@
 
 # GO & MYSQL API ÖRNEĞİ
+Bu projede öncelikle MySQL üzerinden basit bir veritabanı oluşturulmuştur. Mux paketiyle router oluşturulmuş ve gelen istek türlerine göre gerekli fonksiyonlara yönlendirilmiştir. 
 
-Bu projenin ne yaptığı ve kimin için olduğu hakkında kısa bir açıklama
-
+Server local'de default olarak 5555 portundan çalışmaktadır.
 
 
 ## API Kullanımı
 Bu API Golang ve MYSQL kullanılarak oluşturulmuştur. Temel amacı string bir title değeri olan database bağlantılı bir API kaynağı oluşturulmaktır. 
 
-                | (API testlerinde Postman kullanıldı) |
+!!! (API testlerinde Postman kullanıldı)
 
 Not: İstenilirse model klasörü altında bulunan struct yapısı kullanılarak projenin yapısı değitirilebilir.
 
