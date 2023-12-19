@@ -1,31 +1,10 @@
-// package main
-
-// import (
-// 	"apideneme/controller"
-// 	"fmt"
-// 	"net/http"
-
-// 	"github.com/gorilla/mux"
-// )
-
-// func main() {
-// 	router := mux.NewRouter()
-// 	// database.ConnectDB()
-
-// 	router.HandleFunc("/post", controller.GetPosts).Methods("GET")
-
-// 	// router.HandleFunc("/post/:id", controller.GetPost).Methods("GET")
-
-// 	fmt.Println("Server açıldı:  5555 PORTU")
-// 	http.ListenAndServe(":5555", router)
-// }
-
 package main
 
 import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 
@@ -51,6 +30,8 @@ func main() {
 
 	router.HandleFunc("/posts", getPosts).Methods("GET")
 	router.HandleFunc("/posts/{id}", getPostById).Methods("GET")
+	router.HandleFunc("/posts/{id}", updatePost).Methods("PUT")
+	router.HandleFunc("/posts/{id}", deletePost).Methods("DELETE")
 	router.HandleFunc("/posts", createPost).Methods("POST")
 
 	fmt.Println("5555 PORT AÇIK")
@@ -116,5 +97,49 @@ func getPostById(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	json.NewEncoder(w).Encode(post)
+}
 
+func updatePost(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+
+	stmt, err := db.Prepare("UPDATE posts SET title = ? WHERE id = ?")
+
+	if err != nil {
+		panic(err)
+	}
+
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		panic(err)
+	}
+
+	paramsMap := make(map[string]string)
+	json.Unmarshal(body, &paramsMap)
+	newTitle := paramsMap["title"]
+
+	_, err = stmt.Exec(newTitle, params["id"])
+
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Fprintf(w, "Update post")
+}
+
+func deletePost(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+
+	stms, err := db.Prepare("DELETE FROM posts WHERE id = ?")
+
+	if err != nil {
+		panic(err)
+	}
+
+	_, err = stms.Exec(params["id"])
+
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Fprintf(w, "Deleted post %s", params["id"])
 }
