@@ -48,8 +48,11 @@ func main() {
 	}
 	defer db.Close()
 	router := mux.NewRouter()
+
 	router.HandleFunc("/posts", getPosts).Methods("GET")
+	router.HandleFunc("/posts/{id}", getPostById).Methods("GET")
 	router.HandleFunc("/posts", createPost).Methods("POST")
+
 	fmt.Println("5555 PORT AÇIK")
 	http.ListenAndServe(":5555", router)
 }
@@ -91,4 +94,27 @@ func createPost(w http.ResponseWriter, r *http.Request) {
 		panic(err.Error())
 	}
 	fmt.Fprintf(w, "New post was created")
+}
+
+func getPostById(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	result, err := db.Query("SELECT * FROM posts WHERE id = ?", params["id"])
+
+	if err != nil {
+		panic(err)
+	}
+
+	defer result.Close()
+
+	var post Post
+
+	for result.Next() {
+		err := result.Scan(&post.ID, &post.Title)
+		if err != nil {
+			panic(err)
+		}
+	}
+	json.NewEncoder(w).Encode(post)
+
 }
