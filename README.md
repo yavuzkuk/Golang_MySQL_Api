@@ -1,5 +1,5 @@
 
-# Proje Başlığı
+# GO & MYSQL API ÖRNEĞİ
 
 Bu projenin ne yaptığı ve kimin için olduğu hakkında kısa bir açıklama
 
